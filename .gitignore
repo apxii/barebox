@@ -57,13 +57,12 @@ barebox_default_env*
 # git files that we don't want to ignore even it they are dot-files
 #
 !.gitignore
+!.mailmap
 
 #
 # Generated include files
 #
-include/asm-*/asm-offsets.h
 include/config
-include/linux/compile.h
 include/generated
 
 # Generated files
@@ -79,6 +78,16 @@ series
 
 # cscope files
 cscope.*
+ncscope.*
+
+# gnu global files
+GPATH
+GRTAGS
+GSYMS
+GTAGS
 
 # patches
 *.patch
+
+# Kconfig presets
+all.config

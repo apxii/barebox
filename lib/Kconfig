@@ -55,6 +55,9 @@ config LIBMTD
 config STMP_DEVICE
 	bool
 
+config GCD
+	bool
+
 source lib/gui/Kconfig
 
 source lib/bootstrap/Kconfig

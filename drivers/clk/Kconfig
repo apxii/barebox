@@ -11,6 +11,9 @@ config COMMON_CLK
 config CLK_NEED_COMPOSITE
 	bool
 
+config CLK_NEED_FDIV
+	bool
+
 config COMMON_CLK_OF_PROVIDER
 	bool
 	help

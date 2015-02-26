@@ -8,6 +8,9 @@ config COMMON_CLK
 	select HAVE_CLK
 	bool
 
+config CLK_NEED_COMPOSITE
+	bool
+
 config COMMON_CLK_OF_PROVIDER
 	bool
 	help

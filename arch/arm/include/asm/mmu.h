@@ -26,16 +26,7 @@ static inline void setup_dma_coherent(unsigned long offset)
 {
 }
 
-#define dma_alloc dma_alloc
-static inline void *dma_alloc(size_t size)
-{
-	return xmemalign(64, ALIGN(size, 64));
-}
-
 #ifdef CONFIG_MMU
-void *dma_alloc_coherent(size_t size);
-void dma_free_coherent(void *mem, size_t size);
-
 void dma_clean_range(unsigned long, unsigned long);
 void dma_flush_range(unsigned long, unsigned long);
 void dma_inv_range(unsigned long, unsigned long);
@@ -45,16 +36,6 @@ uint32_t mmu_get_pte_cached_flags(void);
 uint32_t mmu_get_pte_uncached_flags(void);
 
 #else
-static inline void *dma_alloc_coherent(size_t size)
-{
-	return xmemalign(4096, size);
-}
-
-static inline void dma_free_coherent(void *mem, size_t size)
-{
-	free(mem);
-}
-
 static inline void dma_clean_range(unsigned long s, unsigned long e)
 {
 }

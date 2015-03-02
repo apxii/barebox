@@ -36,11 +36,17 @@ comment "--- MCI host drivers ---"
 
 config MCI_DW
 	bool "Synopsys DesignWare Memory Card Interface"
-	depends on HAS_DMA
+	depends on ARM
 	help
 	  This selects support for the Synopsys DesignWare Mobile Storage IP
 	  block, this provides host support for SD and MMC interfaces, in both
 	  PIO and external DMA modes.
+
+config MCI_DW_PIO
+	bool "Use PIO mode on Synopsys DesignWare MCI"
+	depends on MCI_DW
+	help
+	  Use PIO mode (instead of IDMAC) in DW MMC driver.
 
 config MCI_MXS
 	bool "i.MX23/i.MX28"

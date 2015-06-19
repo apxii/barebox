@@ -5,3 +5,7 @@
 pblx-$(CONFIG_MACH_RADXA_ROCK) += start_radxa_rock
 FILE_barebox-radxa-rock.img = start_radxa_rock.pblx
 image-$(CONFIG_MACH_RADXA_ROCK) += barebox-radxa-rock.img
+
+pblx-$(CONFIG_MACH_RADXA_ROCK2) += start_radxa_rock2
+FILE_barebox-radxa-rock2.img = start_radxa_rock2.pblx
+image-$(CONFIG_MACH_RADXA_ROCK2) += barebox-radxa-rock2.img

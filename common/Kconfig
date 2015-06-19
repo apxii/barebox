@@ -919,6 +919,8 @@ config DEBUG_ROCKCHIP_UART_PORT
 	help
 	  Choose UART port on which kernel low-level debug messages
 	  should be output.
+	  0-3 for RK3188
+	  0-4 for RK3288
 
 config DEBUG_INITCALLS
 	bool "Trace initcalls"

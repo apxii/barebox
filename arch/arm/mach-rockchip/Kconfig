@@ -1,14 +1,36 @@
 if ARCH_ROCKCHIP
 
+choice
+	prompt "Rockchip subarchitecture"
+	default ARCH_ROCKCHIP_RK3188
+	help
+	  Select an architecture variant
+
+config ARCH_ROCKCHIP_RK3188
+	bool "RK3188"
+
+config ARCH_ROCKCHIP_RK3288
+	bool "RK3288"
+
+endchoice
+
 config ARCH_TEXT_BASE
 	hex
-	default 0x68000000
+	default 0x68000000 if ARCH_ROCKCHIP_RK3188
+	default 0x08000000 if ARCH_ROCKCHIP_RK3288
 
 comment "select Rockchip boards:"
 
 config MACH_RADXA_ROCK
 	select I2C
 	select MFD_ACT8846
+	depends on ARCH_ROCKCHIP_RK3188
 	bool "Radxa rock board"
+
+config MACH_RADXA_ROCK2
+	select I2C
+	select MFD_ACT8846
+	depends on ARCH_ROCKCHIP_RK3288
+	bool "Radxa rock2 board"
 
 endif

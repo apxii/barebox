@@ -3,6 +3,7 @@
 
 #include <io.h>
 
+#if defined(CONFIG_ARCH_ROCKCHIP_RK3188)
 #if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 0
 #define UART_BASE	0x10124000
 #endif
@@ -14,6 +15,23 @@
 #endif
 #if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 3
 #define UART_BASE	0x20068000
+#endif
+#elif defined(CONFIG_ARCH_ROCKCHIP_RK3288)
+#if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 0
+#define UART_BASE	0xFF180000
+#endif
+#if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 1
+#define UART_BASE	0xFF190000
+#endif
+#if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 2
+#define UART_BASE	0xFF690000
+#endif
+#if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 3
+#define UART_BASE	0xFF1B0000
+#endif
+#if CONFIG_DEBUG_ROCKCHIP_UART_PORT == 4
+#define UART_BASE	0xFF1C0000
+#endif
 #endif
 
 #define LSR_THRE	0x20	/* Xmit holding register empty */
@@ -31,6 +49,7 @@
 #define MCR		(4 << 2)
 #define MDR		(8 << 2)
 
+#if defined(CONFIG_ARCH_ROCKCHIP_RK3188)
 static inline void INIT_LL(void)
 {
 	unsigned int clk = 100000000;
@@ -57,4 +76,35 @@ static inline void PUTC_LL(char c)
 	/* Wait to make sure it hits the line, in case we die too soon. */
 	while ((readb(UART_BASE + LSR) & LSR_THRE) == 0);
 }
+#endif
+
+#if defined(CONFIG_ARCH_ROCKCHIP_RK3288)
+static inline void INIT_LL(void)
+{
+	unsigned int clk = 100000000;
+	unsigned int divisor = clk / 16 / 115200;
+
+	writel(0x00, UART_BASE + LCR);
+	writel(0x00, UART_BASE + IER);
+	writel(0x07, UART_BASE + MDR);
+	writel(LCR_BKSE, UART_BASE + LCR);
+	writel(divisor & 0xff, UART_BASE + DLL);
+	writel(divisor >> 8, UART_BASE + DLM);
+	writel(0x03, UART_BASE + LCR);
+	writel(0x03, UART_BASE + MCR);
+	writel(0x07, UART_BASE + FCR);
+	writel(0x00, UART_BASE + MDR);
+}
+
+static inline void PUTC_LL(char c)
+{
+	/* Wait until there is space in the FIFO */
+	while ((readl(UART_BASE + LSR) & LSR_THRE) == 0);
+	/* Send the character */
+	writel(c, UART_BASE + THR);
+	/* Wait to make sure it hits the line, in case we die too soon. */
+	while ((readl(UART_BASE + LSR) & LSR_THRE) == 0);
+}
+#endif
+
 #endif

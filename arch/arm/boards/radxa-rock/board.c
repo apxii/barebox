@@ -19,6 +19,8 @@
 #include <mach/rockchip-regs.h>
 #include <mfd/act8846.h>
 #include <asm/armlinux.h>
+#include <environment.h>
+#include <envfs.h>
 
 static struct i2c_board_info radxa_rock_i2c_devices[] = {
 	{
@@ -56,6 +58,8 @@ static int devices_init(void)
 	radxa_rock_pmic_init();
 
 	armlinux_set_architecture(3066);
+
+	defaultenv_append_directory(env);
 
 	/* Map SRAM to address 0, kernel relies on this */
 	writel((RK_SOC_CON0_REMAP << 16) | RK_SOC_CON0_REMAP,

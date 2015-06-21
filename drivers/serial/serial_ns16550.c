@@ -319,7 +319,8 @@ static __maybe_unused struct ns16550_drvdata tegra_drvdata = {
 static int ns16550_init_iomem(struct device_d *dev, struct ns16550_priv *priv)
 {
 	struct resource *res;
-	int width;
+	int width, reg_io_width, ret;
+	struct device_node *np = dev->device_node;
 
 	res = dev_get_resource(dev, IORESOURCE_MEM, 0);
 	if (IS_ERR(res))
@@ -330,6 +331,23 @@ static int ns16550_init_iomem(struct device_d *dev, struct ns16550_priv *priv)
 		return PTR_ERR(priv->mmiobase);
 
 	width = res->flags & IORESOURCE_MEM_TYPE_MASK;
+
+	ret = of_property_read_u32(np, "reg-io-width", &reg_io_width);
+	if (!ret) {
+		switch (reg_io_width) {
+		default:
+		case 1:
+			width = IORESOURCE_MEM_8BIT;
+			break;
+		case 2:
+			width = IORESOURCE_MEM_16BIT;
+			break;
+		case 4:
+			width = IORESOURCE_MEM_32BIT;
+			break;
+		}
+	}
+
 	switch (width) {
 	case IORESOURCE_MEM_8BIT:
 		priv->read_reg = ns16550_read_reg_mmio_8;

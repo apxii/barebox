@@ -36,6 +36,7 @@ enum rockchip_pinctrl_type {
 	RK2928,
 	RK3066B,
 	RK3188,
+	RK3288,
 };
 
 enum rockchip_pin_bank_type {
@@ -225,6 +226,33 @@ static void rk3188_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
 	}
 }
 
+#define RK3288_PULL_OFFSET		0x140
+static void rk3288_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
+				    int pin_num, void __iomem **reg,
+				    u8 *bit)
+{
+	struct rockchip_pinctrl *info = bank->drvdata;
+
+	/* The first 24 pins of the first bank are located in PMU */
+	if (bank->bank_num == 0) {
+		*reg = info->reg_pmu + RK3188_PULL_PMU_OFFSET;
+
+		*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
+		*bit = pin_num % RK3188_PULL_PINS_PER_REG;
+		*bit *= RK3188_PULL_BITS_PER_PIN;
+	} else {
+		*reg = info->reg_base + RK3288_PULL_OFFSET;
+
+		/* correct the offset, as we're starting with the 2nd bank */
+		*reg -= 0x10;
+		*reg += bank->bank_num * RK3188_PULL_BANK_STRIDE;
+		*reg += ((pin_num / RK3188_PULL_PINS_PER_REG) * 4);
+
+		*bit = (pin_num % RK3188_PULL_PINS_PER_REG);
+		*bit *= RK3188_PULL_BITS_PER_PIN;
+	}
+}
+
 static int rockchip_pinctrl_set_func(struct rockchip_pin_bank *bank, int pin,
 				     int mux)
 {
@@ -271,6 +299,7 @@ static int rockchip_pinctrl_set_pull(struct rockchip_pin_bank *bank,
 		writel(data, reg);
 		break;
 	case RK3188:
+	case RK3288:
 		data = ((1 << RK3188_PULL_BITS_PER_PIN) - 1) << (bit + 16);
 		data |= pull << bit;
 		writel(data, reg);
@@ -514,6 +543,26 @@ static struct rockchip_pin_ctrl rk3188_pin_ctrl = {
 	.pull_calc_reg	= rk3188_calc_pull_reg_and_bit,
 };
 
+static struct rockchip_pin_bank rk3288_pin_banks[] = {
+	PIN_BANK(0, 24, "gpio0"),
+	PIN_BANK(1, 32, "gpio1"),
+	PIN_BANK(2, 32, "gpio2"),
+	PIN_BANK(3, 32, "gpio3"),
+	PIN_BANK(4, 32, "gpio4"),
+	PIN_BANK(5, 32, "gpio5"),
+	PIN_BANK(6, 32, "gpio6"),
+	PIN_BANK(7, 32, "gpio7"),
+	PIN_BANK(8, 16, "gpio8"),
+};
+
+static struct rockchip_pin_ctrl rk3288_pin_ctrl = {
+	.pin_banks	= rk3288_pin_banks,
+	.nr_banks	= ARRAY_SIZE(rk3288_pin_banks),
+	.type		= RK3288,
+	.mux_offset	= 0,
+	.pull_calc_reg	= rk3288_calc_pull_reg_and_bit,
+};
+
 static struct of_device_id rockchip_pinctrl_dt_match[] = {
 	{
 		.compatible = "rockchip,rk2928-pinctrl",
@@ -530,7 +579,12 @@ static struct of_device_id rockchip_pinctrl_dt_match[] = {
 	{
 		.compatible = "rockchip,rk3188-pinctrl",
 		.data = &rk3188_pin_ctrl,
-	}, {
+	},
+	{
+		.compatible = "rockchip,rk3288-pinctrl",
+		.data = &rk3288_pin_ctrl,
+	},
+	{
 		/* sentinel */
 	}
 };

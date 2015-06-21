@@ -214,6 +214,8 @@ struct clk_ops {
 	int		(*get_parent)(struct clk *clk);
 	int		(*set_rate)(struct clk *clk, unsigned long,
 				    unsigned long);
+	int		(*get_phase)(struct clk *clk);
+	int		(*set_phase)(struct clk *clk, int degrees);
 };
 
 struct clk {

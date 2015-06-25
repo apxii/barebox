@@ -783,7 +783,7 @@ static const char *rk3288_critical_clocks[] __initconst = {
 	"hclk_peri",
 };
 
-static void __init rk3288_clk_init(struct device_node *np)
+static int __init rk3288_clk_init(struct device_node *np)
 {
 	void __iomem *reg_base;
 	struct clk *clk;
@@ -791,17 +791,17 @@ static void __init rk3288_clk_init(struct device_node *np)
 	reg_base = of_iomap(np, 0);
 	if (!reg_base) {
 		pr_err("%s: could not map cru region\n", __func__);
-		return;
+		return -ENODEV;
 	}
 
 	rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-
+#if 0
 	/* Fixed-clock should be registered before all others */
 	clk=clk_fixed("xin24m",24000000);
 	if (IS_ERR(clk))
 		pr_warn("%s: could not register clock xin24m: %ld\n",
 			__func__, PTR_ERR(clk));
-
+#endif
 	/* xin12m is created by an cru-internal divider */
 	clk = clk_fixed_factor("xin12m", "xin24m", 0, 1, 2);
 	if (IS_ERR(clk))
@@ -840,5 +840,7 @@ static void __init rk3288_clk_init(struct device_node *np)
 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
 			&rk3288_cpuclk_data, rk3288_cpuclk_rates,
 			ARRAY_SIZE(rk3288_cpuclk_rates));
+
+	return 0;
 }
 CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);

@@ -817,7 +817,7 @@ static void __init rk3188_common_clk_init(struct device_node *np)
 				      ARRAY_SIZE(rk3188_critical_clocks));
 }
 
-static void __init rk3066a_clk_init(struct device_node *np)
+static int __init rk3066a_clk_init(struct device_node *np)
 {
 	rk3188_common_clk_init(np);
 	rockchip_clk_register_plls(rk3066_pll_clks,
@@ -829,10 +829,12 @@ static void __init rk3066a_clk_init(struct device_node *np)
 			mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
 			&rk3066_cpuclk_data, rk3066_cpuclk_rates,
 			ARRAY_SIZE(rk3066_cpuclk_rates));
+
+	return 0;
 }
 CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init);
 
-static void __init rk3188a_clk_init(struct device_node *np)
+static int __init rk3188a_clk_init(struct device_node *np)
 {
 	rk3188_common_clk_init(np);
 	rockchip_clk_register_plls(rk3188_pll_clks,
@@ -846,10 +848,12 @@ static void __init rk3188a_clk_init(struct device_node *np)
 				  ARRAY_SIZE(rk3188_cpuclk_rates));
 
 	rockchip_clk_set_defaults();
+
+	return 0;
 }
 CLK_OF_DECLARE(rk3188a_cru, "rockchip,rk3188a-cru", rk3188a_clk_init);
 
-static void __init rk3188_clk_init(struct device_node *np)
+static int __init rk3188_clk_init(struct device_node *np)
 {
 	int i;
 
@@ -868,5 +872,7 @@ static void __init rk3188_clk_init(struct device_node *np)
 	}
 
 	rk3188a_clk_init(np);
+
+	return 0;
 }
 CLK_OF_DECLARE(rk3188_cru, "rockchip,rk3188-cru", rk3188_clk_init);

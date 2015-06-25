@@ -291,6 +291,7 @@ static void ns16550_probe_dt(struct device_d *dev, struct ns16550_priv *priv)
 	if (!IS_ENABLED(CONFIG_OFDEVICE))
 		return;
 
+	of_property_read_u32(np, "clock-frequency", &priv->plat.clock);
 	of_property_read_u32(np, "reg-shift", &priv->plat.shift);
 }
 
@@ -435,7 +436,7 @@ static int ns16550_probe(struct device_d *dev)
 	else
 		ns16550_probe_dt(dev, priv);
 
-	if (!plat || !plat->clock) {
+	if (!priv->plat.clock) {
 		priv->clk = clk_get(dev, NULL);
 		if (IS_ERR(priv->clk)) {
 			ret = PTR_ERR(priv->clk);
@@ -443,12 +444,6 @@ static int ns16550_probe(struct device_d *dev)
 		}
 		clk_enable(priv->clk);
 		priv->plat.clock = clk_get_rate(priv->clk);
-	}
-
-	if (priv->plat.clock == 0 && IS_ENABLED(CONFIG_OFDEVICE)) {
-		struct device_node *np = dev->device_node;
-
-		of_property_read_u32(np, "clock-frequency", &priv->plat.clock);
 	}
 
 	if (priv->plat.clock == 0) {

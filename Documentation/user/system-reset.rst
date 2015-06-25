@@ -1,11 +1,11 @@
 .. _system_reset:
 
-System Reset
-------------
+System Restart
+--------------
 
-When running the reset command barebox restarts the SoC somehow. Reset can
+When running the reset command barebox restarts the SoC somehow. Restart can
 be done in software, but a more reliable way is to use a hard reset line, which
-really resets the SoC.
+really resets the whole machine.
 The most common way to force such a hard reset is by using a watchdog. Its
 trigger time will be setup as short as possible and after that the software just
 waits for its reset. Very simple and most of the time it does what's expected.
@@ -49,7 +49,7 @@ But there are some drawbacks within this simple approach.
   currently used clock speeds. But don't rely on it.
 
 To workaround these issues the reset signal triggered by a SoC internal source
-must be 'visible' to the external devices to also reset them like a real POR do.
+must be 'visible' to the external devices to also reset them like a real POR does.
 But many SoCs do not provide such a signal. So you can't use the internal reset
 source if you face one of the above listed issues!
 

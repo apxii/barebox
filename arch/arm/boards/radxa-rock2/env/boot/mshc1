@@ -3,7 +3,7 @@
 mount /dev/mshc1.0
 
 oftree -f
-oftree -l /mnt/mshc1.0/rk3288-radxarock2.dtb
+oftree -l /mnt/mshc1.0/boot/rk3288-radxarock2.dtb
 
-global.bootm.image=/mnt/mshc1.0/zImage
-global.linux.bootargs.dyn.root="root=/dev/mmcblk0p2 rootwait"
+global.bootm.image=/mnt/mshc1.0/boot/zImage
+global.linux.bootargs.dyn.root="console=ttyFIQ0 root=/dev/mmcblk0p2 rootwait earlyprintk loglevel=10 panic=10"

@@ -3,7 +3,11 @@
 
 #include <asm/gpio.h>
 
+#if defined(CONFIG_ARCH_ROCKCHIP_RK3288)
+#define ARCH_NR_GPIOS 264
+#else
 #define ARCH_NR_GPIOS 256
+#endif
 
 static inline int gpio_is_valid(int gpio)
 {

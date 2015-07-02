@@ -29,8 +29,8 @@ static struct i2c_board_info radxa_rock2_i2c_devices[] = {
 };
 
 static struct i2c_gpio_platform_data i2c_gpio_pdata = {
-	.sda_pin		= 58,
-	.scl_pin		= 59,
+	.sda_pin		= 15,
+	.scl_pin		= 16,
 	.udelay			= 5,
 };
 
@@ -61,10 +61,11 @@ static int devices_init(void)
 
 	defaultenv_append_directory(env);
 
+#if 1
 	/* Map SRAM to address 0, kernel relies on this */
 	writel((RK_SOC_CON0_REMAP << 16) | RK_SOC_CON0_REMAP,
 	    RK_GRF_BASE + RK_GRF_SOC_CON0);
-
+#endif
 	return 0;
 }
 device_initcall(devices_init);
